@@ -10,14 +10,11 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci 2>/dev/null || npm install
-
-# Copy source files
+# Copy all files (including node_modules if available for offline build)
 COPY . .
+
+# Install dependencies only if node_modules doesn't exist
+RUN if [ ! -d "node_modules" ]; then npm ci 2>/dev/null || npm install; fi
 
 # Build the frontend
 RUN npm run build
