@@ -1,0 +1,19 @@
+# Docker Compose for ChromaDB Playground
+
+services:
+  playground:
+    build: .
+    image: chromadb-playground:latest
+    container_name: chromadb-playground
+    ports:
+      - "3000:3000"
+    environment:
+      # ChromaDB 서버 URL 설정
+      - CHROMA_URL=http://host.docker.internal:8000
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
